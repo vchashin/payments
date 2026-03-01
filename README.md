@@ -1,98 +1,217 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Wallet Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Микросервис кошелька с поддержкой пополнения, списания, идемпотентности и дневных лимитов.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Стек
 
-## Description
+| Слой | Технология | Версия |
+|---|---|---|
+| Runtime | Node.js | ≥ 20 |
+| Framework | NestJS | 11 |
+| ORM | Prisma | 7 |
+| База данных | PostgreSQL | 17 |
+| Валидация | class-validator / class-transformer | — |
+| Документация API | Swagger (OpenAPI) | — |
+| Тесты | Jest | — |
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Запуск
+
+### 1. Зависимости
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+### 2. База данных
+
+Запустите PostgreSQL через Docker:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up -d
 ```
 
-## Run tests
+Или укажите собственный инстанс — создайте `.env` из примера:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
+# Отредактируйте DATABASE_URL и DAILY_CHARGE_LIMIT
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3. Миграции
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npx prisma migrate deploy
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 4. Запуск
 
-## Resources
+```bash
+# Режим разработки (hot reload)
+npm run start:dev
 
-Check out a few resources that may come in handy when working with NestJS:
+# Production
+npm run build && npm run start:prod
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Сервис: `http://localhost:3000`  
+Swagger UI: `http://localhost:3000/api`
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API
 
-## Stay in touch
+### POST /topup — Пополнение
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```json
+{
+  "userId": "user-123",
+  "amount": "1000.00",
+  "currency": "RUB",
+  "idempotencyKey": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
+```
 
-## License
+Ответ `201`:
+```json
+{ "balance": "1000.000000000000000000", "transactionId": "uuid" }
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+### POST /charge — Списание
+
+```json
+{
+  "userId": "user-123",
+  "amount": "200.00",
+  "currency": "RUB",
+  "idempotencyKey": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "reason": "Subscription payment"
+}
+```
+
+Ответ `201`:
+```json
+{ "balance": "800.000000000000000000", "transactionId": "uuid" }
+```
+
+Ошибки:
+
+| Статус | Код | Причина |
+|---|---|---|
+| 400 | `INSUFFICIENT_FUNDS` | Недостаточно средств |
+| 400 | `LIMIT_EXCEEDED` | Превышен дневной лимит списаний |
+| 409 | `IDEMPOTENCY_CONFLICT` | Ключ уже использован для другой операции |
+
+---
+
+### GET /balance — Баланс и история
+
+```
+GET /balance?userId=user-123&currency=RUB&limit=10
+```
+
+Параметры: `userId` (обязательный), `currency` (опциональный), `limit` (1–100, по умолчанию 10).
+
+Ответ `200`:
+```json
+{
+  "balances": [
+    { "currency": "RUB", "balance": "800.000000000000000000" }
+  ],
+  "transactions": [
+    {
+      "id": "uuid",
+      "type": "CHARGE",
+      "amount": "200.000000000000000000",
+      "currency": "RUB",
+      "reason": "Subscription payment",
+      "createdAt": "2026-03-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+## Тесты
+
+```bash
+npm run test          # unit-тесты (без БД)
+npm run test:e2e      # e2e-тесты (нужна PostgreSQL из .env)
+```
+
+---
+
+## Архитектурные решения
+
+### Идемпотентность
+
+Перед любой бизнес-логикой делается поиск по `idempotencyKey` в таблице `idempotency_records`. Если запись найдена — возвращается сохранённый ответ без каких-либо изменений в БД. Если нет — операция выполняется, ответ сохраняется **в той же транзакции**. Атомарность гарантирует, что частично выполненная операция никогда не сохранит ответ.
+
+Ключ является **глобально уникальным** (не per-endpoint): одним ключом нельзя использовать сначала для `topup`, а потом для `charge`. Это выявляет ошибки на стороне клиента — он получит `409 IDEMPOTENCY_CONFLICT` вместо молчаливого возврата неправильных данных. Поле `operationType` хранится рядом с ключом и проверяется при каждом обращении.
+
+**Конкурентные дубли:** два одинаковых запроса, пришедших одновременно, оба пройдут `findUnique → null`. Один закоммитится и создаст запись. Второй получит ошибку `P2002` (unique constraint) — транзакция откатится, сервис поймает исключение и вернёт кэшированный ответ победившей транзакции.
+
+### Гонки при списании
+
+В `/charge` используется **пессимистичная блокировка** на уровне строки:
+
+```sql
+SELECT balance FROM wallets
+WHERE "userId" = $1 AND currency = $2
+FOR UPDATE
+```
+
+Строка кошелька блокируется до конца транзакции. Параллельный запрос ждёт снятия блокировки и после разблокировки видит уже списанный баланс. Это исключает ситуацию, когда два `/charge` одновременно видят достаточный остаток и оба успешно списывают.
+
+### Дневной лимит без race condition
+
+Наивная реализация — `SUM` по таблице транзакций за текущий день — не защищена от гонок: два конкурентных запроса прочитают одинаковую сумму и оба пройдут проверку, суммарно превысив лимит.
+
+Решение — отдельная таблица `daily_usage` с одной строкой на `(userId, currency, date)`. Строка блокируется через `SELECT FOR UPDATE` **внутри той же транзакции**, что и блокировка кошелька:
+
+```
+T1: wallet FOR UPDATE → daily_usage FOR UPDATE → проверка → update
+T2: wallet FOR UPDATE → ждёт T1 → после разблокировки читает обновлённый счётчик
+```
+
+`SELECT FOR UPDATE` в PostgreSQL всегда читает **последнюю закоммиченную версию строки** (вне зависимости от уровня изоляции), поэтому T2 видит реальную накопленную сумму после T1.
+
+Счётчик сбрасывается автоматически: каждый день создаётся новая строка с `total = 0`. Старые строки можно удалять по `createdAt`-индексу фоновой задачей.
+
+### Точность финансовых значений
+
+Суммы хранятся как `DECIMAL(36, 18)` в PostgreSQL, обрабатываются через `Prisma.Decimal` (на базе `decimal.js`) — без потерь точности на операциях с плавающей точкой. На входе принимается `string` (`"9.99"`), а не `number` (`9.99`). Это исключает JavaScript float-неточности ещё до попадания значения в сервис: клиент не может случайно отправить `0.30000000000000004`.
+
+### Структура кода
+
+```
+src/
+  common/
+    filters/          # PrismaExceptionFilter — маппинг Prisma-ошибок в HTTP
+    validators/       # IsPositiveDecimalString — кастомный декоратор для amount
+  prisma/             # PrismaService (lifecycle hooks, connection check)
+  wallet/
+    dto/              # TopupDto, ChargeDto, BalanceQueryDto (class-validator)
+    exceptions/       # Typed HTTP exceptions (INSUFFICIENT_FUNDS и др.)
+    wallet.controller # Маршруты, Swagger-аннотации
+    wallet.service    # Вся бизнес-логика и транзакции
+    wallet.module
+prisma/
+  schema.prisma       # Модели: Wallet, Transaction, IdempotencyRecord, DailyUsage
+  migrations/
+```
+
+Вся бизнес-логика намеренно сосредоточена в `WalletService`. Для тестового задания это оправдано: упрощает чтение кода и избегает избыточных абстракций (Repository, Use Cases). В production при росте функциональности имеет смысл выделить слой репозиториев.
+
+### Схема БД
+
+```
+wallets             — (userId, currency) → balance: Decimal
+transactions        — лог операций; индекс по (userId, currency, type, createdAt)
+idempotency_records — (key) → operationType, responseBody; индекс по createdAt для TTL-очистки
+daily_usage         — (userId, currency, date) → total: Decimal; счётчик дневных списаний
+```
